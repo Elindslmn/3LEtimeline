@@ -5,6 +5,7 @@ import Footer from './components/Footer';
 import PostList from './components/PostList';
 import Post from './components/Post';
 import About from './components/About';
+import AdminPage from './pages/Admin';
 
 const App = () => {
   return (
@@ -15,6 +16,7 @@ const App = () => {
           <Route path="/" element={<PostList />} />
           <Route path="/post/:id" element={<Post />} />
           <Route path="/about" element={<About />} />
+          <Route path="/admin" element={<AdminPage />} />
         </Routes>
         <Footer />
       </div>
