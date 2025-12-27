@@ -28,8 +28,8 @@ function DNAHelix({theme, years, activeYear, onSelectYear}: AnimusSceneProps) {
   const {primary, glow} = THEME_COLORS[theme]
   const nodes = useMemo<HelixNode[]>(() => {
     if (years.length === 0) return []
-    const radius = 0.45
-    const targetHeight = 4.8
+    const radius = 0.7
+    const targetHeight = 5.2
     const spacing = years.length > 1 ? targetHeight / (years.length - 1) : 0
     const mid = (years.length - 1) / 2
     return years.map((year, index) => {
@@ -52,7 +52,7 @@ function DNAHelix({theme, years, activeYear, onSelectYear}: AnimusSceneProps) {
   })
 
   return (
-    <group ref={group} position={[-1.6, 0, 0]}>
+    <group ref={group} position={[-0.9, 0, 0]}>
       {nodes.map((node, index) => {
         const isActive = node.year === activeYear
         const scale = isActive ? 1.2 : 1
@@ -116,7 +116,7 @@ function WireGrid({theme}: {theme: ThemeName}) {
 export default function AnimusScene({theme, years, activeYear, onSelectYear}: AnimusSceneProps) {
   return (
     <div className="helix-canvas">
-      <Canvas camera={{position: [0, 0, 4.6], fov: 35}}>
+      <Canvas camera={{position: [0, 0, 3.4], fov: 40}}>
         <ambientLight intensity={0.5} />
         <pointLight position={[3, 4, 4]} intensity={1.2} />
         <DNAHelix theme={theme} years={years} activeYear={activeYear} onSelectYear={onSelectYear} />
