@@ -1,5 +1,6 @@
 import React, {useMemo, useRef} from 'react'
 import {Canvas, useFrame} from '@react-three/fiber'
+import {Html} from '@react-three/drei'
 import * as THREE from 'three'
 
 type ThemeName = 'brotherhood' | 'cyberpunk' | 'ratchet'
@@ -28,12 +29,12 @@ function DNAHelix({theme, years, activeYear, onSelectYear}: AnimusSceneProps) {
   const {primary, glow} = THEME_COLORS[theme]
   const nodes = useMemo<HelixNode[]>(() => {
     if (years.length === 0) return []
-    const radius = 0.7
-    const targetHeight = 5.2
+    const radius = 0.95
+    const targetHeight = 5.6
     const spacing = years.length > 1 ? targetHeight / (years.length - 1) : 0
     const mid = (years.length - 1) / 2
     return years.map((year, index) => {
-      const t = index * 0.6
+      const t = index * 0.7
       const x = Math.cos(t) * radius
       const z = Math.sin(t) * radius
       const y = (index - mid) * spacing
@@ -47,15 +48,24 @@ function DNAHelix({theme, years, activeYear, onSelectYear}: AnimusSceneProps) {
 
   useFrame(() => {
     if (group.current) {
-      group.current.rotation.y += 0.006
+      group.current.rotation.y += 0.0045
     }
   })
 
+  const activeIndex = activeYear ? years.indexOf(activeYear) : 0
+
   return (
-    <group ref={group} position={[-0.9, 0, 0]}>
+    <group ref={group} position={[-1.25, 0, 0]} rotation={[0.08, 0.4, 0]}>
+      <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
+        <cylinderGeometry args={[0.02, 0.02, 6, 24]} />
+        <meshStandardMaterial color={primary} emissive={glow} emissiveIntensity={0.4} opacity={0.4} transparent />
+      </mesh>
       {nodes.map((node, index) => {
         const isActive = node.year === activeYear
-        const scale = isActive ? 1.2 : 1
+        const dist = Math.abs(index - activeIndex)
+        const scale = isActive ? 1.25 : Math.max(0.75, 1 - dist * 0.08)
+        const opacity = Math.max(0.25, 1 - dist * 0.15)
+        const blur = Math.min(8, dist * 1.6)
         return (
           <group key={node.year} position={[0, 0, 0]}>
             <mesh
@@ -90,12 +100,28 @@ function DNAHelix({theme, years, activeYear, onSelectYear}: AnimusSceneProps) {
               <cylinderGeometry args={[0.01, 0.01, Math.abs(node.posLeft[0]) * 2, 12]} />
               <meshStandardMaterial color={primary} opacity={0.6} transparent />
             </mesh>
-            {index % 3 === 0 && (
-              <mesh position={[node.posLeft[0] * 1.6, node.posLeft[1], node.posLeft[2] * 1.4]}>
-                <sphereGeometry args={[0.03, 12, 12]} />
-                <meshStandardMaterial color={primary} opacity={0.5} transparent />
-              </mesh>
-            )}
+            <Html
+              position={[node.posLeft[0] * 1.6, node.posLeft[1], node.posLeft[2] * 1.2]}
+              transform
+              distanceFactor={1.5}
+              center
+            >
+              <div
+                className={`helix-card3d${isActive ? ' is-active' : ''}`}
+                style={{
+                  opacity,
+                  filter: `blur(${blur}px)`,
+                  transform: `scale(${scale})`,
+                  animationDelay: `${index * 0.12}s`
+                }}
+              >
+                <div className="helix-card3d-header">
+                  <span className="helix-card3d-year">{node.year}</span>
+                  <span className="helix-card3d-status">{isActive ? 'SYNCED' : 'LOCKED'}</span>
+                </div>
+                <div className="helix-card3d-meta">SEQ. {node.year} // MEMORY START</div>
+              </div>
+            </Html>
           </group>
         )
       })}
@@ -116,9 +142,10 @@ function WireGrid({theme}: {theme: ThemeName}) {
 export default function AnimusScene({theme, years, activeYear, onSelectYear}: AnimusSceneProps) {
   return (
     <div className="helix-canvas">
-      <Canvas camera={{position: [0, 0, 3.4], fov: 40}}>
+      <Canvas camera={{position: [0.2, 0, 4.2], fov: 38}}>
         <ambientLight intensity={0.5} />
-        <pointLight position={[3, 4, 4]} intensity={1.2} />
+        <pointLight position={[3, 4, 4]} intensity={1.4} />
+        <pointLight position={[-2, -2, 3]} intensity={0.6} />
         <DNAHelix theme={theme} years={years} activeYear={activeYear} onSelectYear={onSelectYear} />
         <WireGrid theme={theme} />
       </Canvas>

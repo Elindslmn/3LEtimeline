@@ -62,6 +62,24 @@ function AppRouterWrapper(){
       <div className="app-shell">
         <CustomCursor />
         <div className="ui-scanlines" />
+        <div className="ui-noise" />
+        <div className="hud-overlay">
+          <div className="hud-top">
+            <div>
+              <div className="hud-title">ANIMUS // CORE</div>
+              <div className="hud-meta">OMEGA PROTOCOL // V4.0</div>
+            </div>
+            <div className="hud-stats">
+              <div>MEM_USAGE: 4024 TB</div>
+              <div>SYNC_RATE: 98.4%</div>
+              <div className="hud-bar" />
+            </div>
+          </div>
+          <div className="hud-bottom">
+            <div>COORD: 45.4408 N, 12.3155 E</div>
+            <div>SUBJECT: 17</div>
+          </div>
+        </div>
 
         <header className="app-header">
           <div>
