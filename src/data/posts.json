@@ -1,0 +1,14 @@
+[
+  {
+    "id": "hello-world",
+    "title": "Hello, World!",
+    "date": "2025-12-27",
+    "content": "This is my first blog post. I'm excited to share my thoughts with the world!"
+  },
+  {
+    "id": "second-post",
+    "title": "My Second Post",
+    "date": "2025-12-28",
+    "content": "This is my second blog post. I'm getting the hang of this!"
+  }
+]
