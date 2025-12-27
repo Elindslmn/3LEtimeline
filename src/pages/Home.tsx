@@ -44,51 +44,52 @@ export default function Home({events, years, activeYear, onSelectYear}: HomeProp
     <div className="home-shell">
       <section id="about" className="hero">
         <div className="hero-copy">
-          <p className="hero-kicker">Animus // Memory Stream</p>
-          <h1 className="hero-title">Elind Timeline</h1>
+          <p className="hero-kicker">System Ready // Animus Helix</p>
+          <h1 className="hero-title">
+            Elind <span className="hero-title-accent">Timeline</span>
+          </h1>
           <p className="hero-subtitle">
-            Curated memory stream from {startYear}-{endYear}. Dive into the index or enter the helix to sync.
+            Curated memory stream from {startYear}-{endYear}. Select a node on the rail to jump or dive into the helix to sync.
           </p>
           <div className="hero-actions">
-            <a className="cta-button" href="#timeline">Open Timeline</a>
+            <a className="cta-button" href="#timeline">Explore Archives</a>
             <a className="cta-button ghost" href="#animus">Enter Helix</a>
           </div>
         </div>
         <div className="hero-right">
-          <div className="hero-visual">
-            <div className="timeline-axis" role="list">
-              {axisNodes.map((node) => (
-                <button
-                  type="button"
-                  key={node.year}
-                  className={`axis-node${node.isActive ? ' is-highlight' : ''}`}
-                  style={{'--pos': node.pos, '--depth': node.depth} as React.CSSProperties}
-                  onClick={() => onSelectYear(node.year)}
-                  aria-pressed={node.isActive}
-                  title={`Go to ${node.year}`}
-                >
-                  <span className="axis-node-label">{node.year}</span>
-                </button>
-              ))}
-            </div>
-            <div className="axis-controls">
+          <div className="hero-rail">
+            <div className="rail-line" aria-hidden="true" />
+            {axisNodes.map((node) => (
               <button
                 type="button"
-                className="axis-control"
-                onClick={() => stepYear(-1)}
-                disabled={safeActiveIndex <= 0}
+                key={node.year}
+                className={`rail-node${node.isActive ? ' is-highlight' : ''}`}
+                style={{'--pos': node.pos, '--depth': node.depth} as React.CSSProperties}
+                onClick={() => onSelectYear(node.year)}
+                aria-pressed={node.isActive}
+                title={`Go to ${node.year}`}
               >
-                Prev year
+                <span className="rail-node-label">{node.year}</span>
               </button>
-              <button
-                type="button"
-                className="axis-control"
-                onClick={() => stepYear(1)}
-                disabled={safeActiveIndex >= years.length - 1}
-              >
-                Next year
-              </button>
-            </div>
+            ))}
+          </div>
+          <div className="axis-controls">
+            <button
+              type="button"
+              className="axis-control"
+              onClick={() => stepYear(-1)}
+              disabled={safeActiveIndex <= 0}
+            >
+              Prev year
+            </button>
+            <button
+              type="button"
+              className="axis-control"
+              onClick={() => stepYear(1)}
+              disabled={safeActiveIndex >= years.length - 1}
+            >
+              Next year
+            </button>
           </div>
           <div className="hero-stats">
             <div className="stat-card">
