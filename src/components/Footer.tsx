@@ -3,7 +3,7 @@ import React from 'react';
 const Footer = () => {
   return (
     <footer>
-      <p>&copy; 2025 My Simple Blog</p>
+      <p>3LE Timeline</p>
     </footer>
   );
 };

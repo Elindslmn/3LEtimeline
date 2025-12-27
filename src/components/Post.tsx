@@ -14,9 +14,15 @@ const Post = () => {
     <div className="post">
       <h1>{post.title}</h1>
       <p className="post-meta">{post.date}</p>
+      {post.imageUrl && <img src={post.imageUrl} alt={post.title} />}
       <div className="post-content">
         <p>{post.content}</p>
       </div>
+      {post.externalLink && (
+        <a href={post.externalLink} target="_blank" rel="noopener noreferrer">
+          Read more
+        </a>
+      )}
     </div>
   );
 };

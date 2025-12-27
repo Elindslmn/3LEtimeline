@@ -6,6 +6,8 @@ type Post = {
   title: string;
   date: string;
   content: string;
+  imageUrl?: string;
+  externalLink?: string;
 };
 
 const AdminPanel = () => {
@@ -13,7 +15,7 @@ const AdminPanel = () => {
   const [editingPost, setEditingPost] = useState<Post | null>(null);
 
   const handleAddPost = () => {
-    const newPost = {
+    const newPost: Post = {
       id: `post-${Date.now()}`,
       title: 'New Post',
       date: new Date().toISOString().slice(0, 10),
@@ -31,26 +33,26 @@ const AdminPanel = () => {
   };
 
   const handleUpdatePost = (updatedPost: Post) => {
-    setPosts(posts.map((post) => (post.id === updatedPost.id ? updatedPost : post)));
+    const updatedPosts = posts.map((post) =>
+      post.id === updatedPost.id ? updatedPost : post
+    );
+    setPosts(updatedPosts);
     setEditingPost(null);
   };
 
-  const handleDownload = () => {
+  const handleSaveChanges = () => {
     const data = JSON.stringify(posts, null, 2);
-    const blob = new Blob([data], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-a.download = 'posts.json';
-    a.click();
-    URL.revokeObjectURL(url);
+    const mailtoLink = `mailto:?subject=Updated posts.json&body=${encodeURIComponent(
+      data
+    )}`;
+    window.location.href = mailtoLink;
   };
 
   return (
     <div>
       <h2>Admin Panel</h2>
       <button onClick={handleAddPost}>Add New Post</button>
-      <button onClick={handleDownload}>Download posts.json</button>
+      <button onClick={handleSaveChanges}>Save Changes</button>
       {editingPost && (
         <div>
           <h3>Edit Post</h3>
@@ -62,6 +64,22 @@ a.download = 'posts.json';
           <textarea
             value={editingPost.content}
             onChange={(e) => setEditingPost({ ...editingPost, content: e.target.value })}
+          />
+          <input
+            type="text"
+            placeholder="Image URL"
+            value={editingPost.imageUrl || ''}
+            onChange={(e) =>
+              setEditingPost({ ...editingPost, imageUrl: e.target.value })
+            }
+          />
+          <input
+            type="text"
+            placeholder="External Link"
+            value={editingPost.externalLink || ''}
+            onChange={(e) =>
+              setEditingPost({ ...editingPost, externalLink: e.target.value })
+            }
           />
           <button onClick={() => handleUpdatePost(editingPost)}>Update Post</button>
         </div>
