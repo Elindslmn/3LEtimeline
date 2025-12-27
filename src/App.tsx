@@ -1,5 +1,5 @@
 import React, {useEffect, useMemo, useState} from 'react'
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Link, useLocation } from 'react-router-dom'
 import sampleEvents from '../data/events.json'
 import Home from './pages/Home'
 import AdminPage from './pages/AdminPage'
@@ -10,7 +10,8 @@ const STORAGE_KEY = 'elind_timeline_events_v1'
 
 type ThemeName = 'brotherhood' | 'cyberpunk' | 'ratchet'
 
-function AppRouterWrapper(){
+function AppShell(){
+  const location = useLocation()
   const [events, setEvents] = useState(sampleEvents)
   const [theme, setTheme] = useState<ThemeName>('brotherhood')
   const [activeYear, setActiveYear] = useState<number | null>(null)
@@ -57,78 +58,80 @@ function AppRouterWrapper(){
     }
   }
 
+  const isHome = location.pathname === '/'
+
   return (
-    <BrowserRouter>
-      <div className="app-shell">
-        <CustomCursor />
-        <div className="ui-scanlines" />
-        <div className="ui-noise" />
-        <div className="hud-overlay">
-          <div className="hud-top">
-            <div>
-              <div className="hud-title">ANIMUS // CORE</div>
-              <div className="hud-meta">OMEGA PROTOCOL // V4.0</div>
-            </div>
-            <div className="hud-stats">
-              <div>MEM_USAGE: 4024 TB</div>
-              <div>SYNC_RATE: 98.4%</div>
-              <div className="hud-bar" />
-            </div>
+    <div className="app-shell">
+      <CustomCursor />
+      <div className="ui-scanlines" />
+      <div className="ui-noise" />
+      <div className="hud-overlay">
+        <div className="hud-top">
+          <div>
+            <div className="hud-title">ANIMUS // CORE</div>
+            <div className="hud-meta">OMEGA PROTOCOL // V4.0</div>
           </div>
-          <div className="hud-bottom">
-            <div>COORD: 45.4408 N, 12.3155 E</div>
-            <div>SUBJECT: 17</div>
+          <div className="hud-stats">
+            <div>MEM_USAGE: 4024 TB</div>
+            <div>SYNC_RATE: 98.4%</div>
+            <div className="hud-bar" />
           </div>
         </div>
+        <div className="hud-bottom">
+          <div>COORD: 45.4408 N, 12.3155 E</div>
+          <div>SUBJECT: 17</div>
+        </div>
+      </div>
 
-        <header className="app-header">
-          <div>
-            <p className="app-subtitle">Animus Helix</p>
-            <h1 className="app-title">Elind Timeline 1995-2025</h1>
+      <header className="app-header">
+        <div>
+          <p className="app-subtitle">Animus Helix</p>
+          <h1 className="app-title">Elind Timeline 1995-2025</h1>
+        </div>
+        <div className="app-header-right">
+          <nav className="app-nav">
+            <Link to="/">Home</Link>
+            <a href="#about">About</a>
+            <Link to="/admin">Login</Link>
+          </nav>
+          <div className="theme-switch">
+            <span className="theme-label">Tema</span>
+            <button
+              type="button"
+              className={theme === 'brotherhood' ? 'is-active' : ''}
+              onClick={() => setTheme('brotherhood')}
+            >
+              AC
+            </button>
+            <button
+              type="button"
+              className={theme === 'cyberpunk' ? 'is-active' : ''}
+              onClick={() => setTheme('cyberpunk')}
+            >
+              CP
+            </button>
+            <button
+              type="button"
+              className={theme === 'ratchet' ? 'is-active' : ''}
+              onClick={() => setTheme('ratchet')}
+            >
+              R&C
+            </button>
           </div>
-          <div className="app-header-right">
-            <nav className="app-nav">
-              <Link to="/">Home</Link>
-              <a href="#about">About</a>
-              <Link to="/admin">Login</Link>
-            </nav>
-            <div className="theme-switch">
-              <span className="theme-label">Tema</span>
-              <button
-                type="button"
-                className={theme === 'brotherhood' ? 'is-active' : ''}
-                onClick={() => setTheme('brotherhood')}
-              >
-                AC
-              </button>
-              <button
-                type="button"
-                className={theme === 'cyberpunk' ? 'is-active' : ''}
-                onClick={() => setTheme('cyberpunk')}
-              >
-                CP
-              </button>
-              <button
-                type="button"
-                className={theme === 'ratchet' ? 'is-active' : ''}
-                onClick={() => setTheme('ratchet')}
-              >
-                R&C
-              </button>
-            </div>
-          </div>
-        </header>
+        </div>
+      </header>
 
-        <div className="app-layout">
-          <aside className="app-helix">
-            <AnimusScene
-              theme={theme}
-              years={years}
-              activeYear={activeYear}
-              onSelectYear={handleSelectYear}
-            />
-          </aside>
+      <div className={`app-layout${isHome ? ' is-home' : ''}`}>
+        <aside className={`app-helix${isHome ? ' is-home' : ''}`}>
+          <AnimusScene
+            theme={theme}
+            years={years}
+            activeYear={activeYear}
+            onSelectYear={handleSelectYear}
+          />
+        </aside>
 
+        {!isHome && (
           <main className="app-main">
             <Routes>
               <Route
@@ -147,10 +150,16 @@ function AppRouterWrapper(){
               />
             </Routes>
           </main>
-        </div>
+        )}
       </div>
-    </BrowserRouter>
+    </div>
   )
 }
 
-export default AppRouterWrapper
+export default function AppRouterWrapper() {
+  return (
+    <BrowserRouter>
+      <AppShell />
+    </BrowserRouter>
+  )
+}
