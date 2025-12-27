@@ -15,6 +15,13 @@ export default function Home({events, years, activeYear, onSelectYear}: HomeProp
   const startYear = years[0] ?? 1995
   const endYear = years[years.length - 1] ?? startYear
   const focusYear = activeYear ?? startYear
+  const axisNodes = [
+    {pos: '10%', depth: '0px'},
+    {pos: '30%', depth: '18px'},
+    {pos: '55%', depth: '36px', highlight: true},
+    {pos: '78%', depth: '54px'},
+    {pos: '92%', depth: '72px'}
+  ]
 
   return (
     <div className="home-shell">
@@ -30,22 +37,35 @@ export default function Home({events, years, activeYear, onSelectYear}: HomeProp
             <a className="cta-button ghost" href="#animus">Enter Helix</a>
           </div>
         </div>
-        <div className="hero-stats">
-          <div className="stat-card">
-            <span className="stat-label">Years Indexed</span>
-            <span className="stat-value">{totalYears || 0}</span>
+        <div className="hero-right">
+          <div className="hero-visual">
+            <div className="timeline-axis">
+              {axisNodes.map((node, index) => (
+                <span
+                  key={index}
+                  className={`axis-node${node.highlight ? ' is-highlight' : ''}`}
+                  style={{'--pos': node.pos, '--depth': node.depth} as React.CSSProperties}
+                />
+              ))}
+            </div>
           </div>
-          <div className="stat-card">
-            <span className="stat-label">Events Logged</span>
-            <span className="stat-value">{totalEvents || 0}</span>
-          </div>
-          <div className="stat-card">
-            <span className="stat-label">Focus Year</span>
-            <span className="stat-value">{focusYear}</span>
-          </div>
-          <div className="stat-card">
-            <span className="stat-label">Sync Rate</span>
-            <span className="stat-value">98.4%</span>
+          <div className="hero-stats">
+            <div className="stat-card">
+              <span className="stat-label">Years Indexed</span>
+              <span className="stat-value">{totalYears || 0}</span>
+            </div>
+            <div className="stat-card">
+              <span className="stat-label">Events Logged</span>
+              <span className="stat-value">{totalEvents || 0}</span>
+            </div>
+            <div className="stat-card">
+              <span className="stat-label">Focus Year</span>
+              <span className="stat-value">{focusYear}</span>
+            </div>
+            <div className="stat-card">
+              <span className="stat-label">Sync Rate</span>
+              <span className="stat-value">98.4%</span>
+            </div>
           </div>
         </div>
       </section>

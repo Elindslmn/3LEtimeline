@@ -6,10 +6,24 @@ import AdminPage from './pages/AdminPage'
 import CustomCursor from './components/CustomCursor'
 
 const STORAGE_KEY = 'elind_timeline_events_v1'
+const THEME_KEY = 'elind_timeline_theme_v1'
+
+type ThemeName = 'white' | 'ratchet' | 'cyberpunk'
 
 function AppShell(){
   const [events, setEvents] = useState(sampleEvents)
   const [activeYear, setActiveYear] = useState<number | null>(null)
+  const [theme, setTheme] = useState<ThemeName>(() => {
+    if (typeof window === 'undefined') return 'cyberpunk'
+    const stored = window.localStorage.getItem(THEME_KEY) as ThemeName | null
+    return stored ?? 'cyberpunk'
+  })
+
+  useEffect(() => {
+    if (typeof document === 'undefined') return
+    document.body.dataset.theme = theme
+    window.localStorage.setItem(THEME_KEY, theme)
+  }, [theme])
 
   useEffect(() => {
     const raw = localStorage.getItem(STORAGE_KEY)
@@ -66,6 +80,33 @@ function AppShell(){
             <a href="#animus">Helix</a>
             <Link to="/admin">Login</Link>
           </nav>
+          <div className="theme-switch">
+            <span className="theme-label">Theme</span>
+            <button
+              type="button"
+              className={`theme-button${theme === 'white' ? ' is-active' : ''}`}
+              onClick={() => setTheme('white')}
+              aria-pressed={theme === 'white'}
+            >
+              White
+            </button>
+            <button
+              type="button"
+              className={`theme-button${theme === 'ratchet' ? ' is-active' : ''}`}
+              onClick={() => setTheme('ratchet')}
+              aria-pressed={theme === 'ratchet'}
+            >
+              R&C
+            </button>
+            <button
+              type="button"
+              className={`theme-button${theme === 'cyberpunk' ? ' is-active' : ''}`}
+              onClick={() => setTheme('cyberpunk')}
+              aria-pressed={theme === 'cyberpunk'}
+            >
+              Cyber
+            </button>
+          </div>
         </div>
       </header>
 
