@@ -36,18 +36,4 @@ Recommended: Vercel (fast, automatic for Vite apps)
 4. (Optional) Add Environment Variable `VITE_ADMIN_PASS` in Vercel settings to set admin password.
 5. In Vercel dashboard -> Domains, add your custom domain `3LE.time` (you must own it) and follow DNS instructions (add A/ALIAS/CNAME as Vercel shows).
 
-Alternative hosting: Netlify (similar flow) or GitHub Pages (requires extra config for SPA routing).
-
-Files
-Netlify Identity (recommended for simple serverless auth)
-
-1. Deploy the site to Netlify.
-2. In Netlify dashboard, open the site -> "Identity" -> "Enable Identity".
-3. Under "Services" enable Git Gateway (optional) or invite users via the Identity UI.
-4. Invite yourself (email) from the Identity panel and accept the invite — then use "Login with Netlify Identity" on `/admin` to sign in.
-5. You can also set `VITE_ADMIN_PASS` in Netlify Environment Variables for a fallback local password.
-
-Notes
-- Netlify Identity is client-side authentication managed by Netlify. It provides secure auth without building your own backend.
-- If you prefer Vercel, consider Auth0, Clerk, or next-auth (requires serverless functions).
-
+Alternative hosting: GitHub Pages (requires extra config for SPA routing).

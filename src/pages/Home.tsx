@@ -43,7 +43,7 @@ export default function Home({events, years, activeYear, onSelectYear}: HomeProp
   return (
     <div className="home-shell">
       <section id="about" className="hero">
-        <div className="hero-copy">
+        <div className="hero-copy parallax-slow">
           <p className="hero-kicker">System Ready // Animus Helix</p>
           <h1 className="hero-title">
             Elind <span className="hero-title-accent">Timeline</span>
@@ -57,7 +57,7 @@ export default function Home({events, years, activeYear, onSelectYear}: HomeProp
           </div>
         </div>
         <div className="hero-right">
-          <div className="hero-rail">
+          <div className="hero-rail parallax-fast">
             <div className="rail-line" aria-hidden="true" />
             {axisNodes.map((node) => (
               <button
@@ -91,7 +91,7 @@ export default function Home({events, years, activeYear, onSelectYear}: HomeProp
               Next year
             </button>
           </div>
-          <div className="hero-stats">
+          <div className="hero-stats parallax-mid">
             <div className="stat-card">
               <span className="stat-label">Years Indexed</span>
               <span className="stat-value">{totalYears || 0}</span>

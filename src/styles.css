@@ -23,6 +23,9 @@
   --font-main: 'Share Tech Mono', monospace;
   --font-display: 'Orbitron', sans-serif;
   --cursor-color: #00ffff;
+  --parallax-slow: 0px;
+  --parallax-mid: 0px;
+  --parallax-fast: 0px;
 }
 
 body[data-theme='white'] {
@@ -145,6 +148,37 @@ a {
   position: relative;
   z-index: 1;
   min-height: 100vh;
+}
+
+.canvas-root {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.overlay-root {
+  width: 100%;
+  min-height: 100%;
+  position: relative;
+}
+
+.parallax-slow,
+.parallax-mid,
+.parallax-fast {
+  will-change: transform;
+}
+
+.parallax-slow {
+  transform: translateY(var(--parallax-slow));
+}
+
+.parallax-mid {
+  transform: translateY(var(--parallax-mid));
+}
+
+.parallax-fast {
+  transform: translateY(var(--parallax-fast));
 }
 
 .app-header {
