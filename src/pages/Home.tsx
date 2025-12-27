@@ -1,15 +1,18 @@
 import React from 'react'
 import Timeline from '../components/Timeline'
 import AnimusScene from '../components/AnimusScene'
+import TimeRail from '../components/TimeRail'
 
 type HomeProps = {
   events: any[]
   years: number[]
   activeYear: number | null
   onSelectYear: (year: number) => void
+  theme: string
+  setTheme: (theme: string) => void
 }
 
-export default function Home({events, years, activeYear, onSelectYear}: HomeProps){
+export default function Home({events, years, activeYear, onSelectYear, theme, setTheme}: HomeProps){
   const totalEvents = events.length
   const totalYears = years.length
   const startYear = years[0] ?? 1995
@@ -55,23 +58,15 @@ export default function Home({events, years, activeYear, onSelectYear}: HomeProp
             <a className="cta-button" href="#timeline">Explore Archives</a>
             <a className="cta-button ghost" href="#animus">Enter Helix</a>
           </div>
+          <div className="theme-switcher">
+            <button onClick={() => setTheme('night-city')} className={theme === 'night-city' ? 'is-active' : ''}>Night City</button>
+            <button onClick={() => setTheme('lombex-omni')} className={theme === 'lombex-omni' ? 'is-active' : ''}>Lombex Omni</button>
+            <button onClick={() => setTheme('abstergo-white')} className={theme === 'abstergo-white' ? 'is-active' : ''}>Abstergo</button>
+          </div>
         </div>
         <div className="hero-right">
           <div className="hero-rail parallax-fast">
-            <div className="rail-line" aria-hidden="true" />
-            {axisNodes.map((node) => (
-              <button
-                type="button"
-                key={node.year}
-                className={`rail-node${node.isActive ? ' is-highlight' : ''}`}
-                style={{'--pos': node.pos, '--depth': node.depth} as React.CSSProperties}
-                onClick={() => onSelectYear(node.year)}
-                aria-pressed={node.isActive}
-                title={`Go to ${node.year}`}
-              >
-                <span className="rail-node-label">{node.year}</span>
-              </button>
-            ))}
+            <TimeRail years={years} activeYear={activeYear} onSelectYear={onSelectYear} />
           </div>
           <div className="axis-controls">
             <button
