@@ -300,9 +300,10 @@ a {
 .hero-visual {
   position: relative;
   height: 220px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 16px;
   perspective: 900px;
 }
 
@@ -336,6 +337,12 @@ a {
   background: var(--accent);
   transform: translate(-50%, -50%) translateZ(var(--depth));
   box-shadow: 0 0 12px var(--glow);
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .axis-node.is-highlight {
@@ -351,6 +358,54 @@ a {
   inset: -6px;
   border-radius: 50%;
   border: 1px solid rgba(255, 255, 255, 0.35);
+}
+
+.axis-node-label {
+  position: absolute;
+  top: 18px;
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-color);
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 160ms ease, transform 160ms ease;
+  pointer-events: none;
+}
+
+.axis-node:hover .axis-node-label,
+.axis-node.is-highlight .axis-node-label {
+  opacity: 0.9;
+  transform: translateY(0);
+}
+
+.axis-controls {
+  display: flex;
+  gap: 12px;
+}
+
+.axis-control {
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--soft-border);
+  background: var(--panel);
+  color: inherit;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-size: 9px;
+  transition: border-color 160ms ease, color 160ms ease, background 160ms ease, transform 160ms ease;
+}
+
+.axis-control:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-soft);
+  transform: translateY(-1px);
+}
+
+.axis-control:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 
 .cta-button {

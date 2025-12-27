@@ -15,13 +15,30 @@ export default function Home({events, years, activeYear, onSelectYear}: HomeProp
   const startYear = years[0] ?? 1995
   const endYear = years[years.length - 1] ?? startYear
   const focusYear = activeYear ?? startYear
-  const axisNodes = [
-    {pos: '10%', depth: '0px'},
-    {pos: '30%', depth: '18px'},
-    {pos: '55%', depth: '36px', highlight: true},
-    {pos: '78%', depth: '54px'},
-    {pos: '92%', depth: '72px'}
-  ]
+  const activeIndex = years.length > 0 && activeYear != null ? years.indexOf(activeYear) : 0
+  const safeActiveIndex = activeIndex >= 0 ? activeIndex : 0
+  const axisCount = Math.min(5, Math.max(1, years.length))
+  const startIndex = years.length > 0
+    ? Math.max(0, Math.min(safeActiveIndex - Math.floor(axisCount / 2), years.length - axisCount))
+    : 0
+  const axisYears = years.length > 0 ? years.slice(startIndex, startIndex + axisCount) : [focusYear]
+  const axisStep = axisCount > 1 ? 80 / (axisCount - 1) : 0
+  const axisNodes = axisYears.map((year, index) => {
+    const pos = `${10 + index * axisStep}%`
+    const depth = `${(index - Math.floor(axisCount / 2)) * 18 + 24}px`
+    return {
+      year,
+      pos,
+      depth,
+      isActive: year === activeYear
+    }
+  })
+
+  const stepYear = (delta: number) => {
+    if (years.length === 0) return
+    const nextIndex = Math.max(0, Math.min(safeActiveIndex + delta, years.length - 1))
+    onSelectYear(years[nextIndex])
+  }
 
   return (
     <div className="home-shell">
@@ -39,14 +56,38 @@ export default function Home({events, years, activeYear, onSelectYear}: HomeProp
         </div>
         <div className="hero-right">
           <div className="hero-visual">
-            <div className="timeline-axis">
-              {axisNodes.map((node, index) => (
-                <span
-                  key={index}
-                  className={`axis-node${node.highlight ? ' is-highlight' : ''}`}
+            <div className="timeline-axis" role="list">
+              {axisNodes.map((node) => (
+                <button
+                  type="button"
+                  key={node.year}
+                  className={`axis-node${node.isActive ? ' is-highlight' : ''}`}
                   style={{'--pos': node.pos, '--depth': node.depth} as React.CSSProperties}
-                />
+                  onClick={() => onSelectYear(node.year)}
+                  aria-pressed={node.isActive}
+                  title={`Go to ${node.year}`}
+                >
+                  <span className="axis-node-label">{node.year}</span>
+                </button>
               ))}
+            </div>
+            <div className="axis-controls">
+              <button
+                type="button"
+                className="axis-control"
+                onClick={() => stepYear(-1)}
+                disabled={safeActiveIndex <= 0}
+              >
+                Prev year
+              </button>
+              <button
+                type="button"
+                className="axis-control"
+                onClick={() => stepYear(1)}
+                disabled={safeActiveIndex >= years.length - 1}
+              >
+                Next year
+              </button>
             </div>
           </div>
           <div className="hero-stats">
