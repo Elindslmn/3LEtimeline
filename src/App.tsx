@@ -6,6 +6,7 @@ import PostList from './components/PostList';
 import Post from './components/Post';
 import About from './components/About';
 import AdminPage from './pages/Admin';
+import Background3D from './components/Background3D';
 
 const App = () => {
   const [theme, setTheme] = useState('dark');
@@ -20,20 +21,17 @@ const App = () => {
 
   return (
     <BrowserRouter>
-      <div className="container">
-        <Header toggleTheme={toggleTheme} />
-        <audio controls autoPlay loop>
-          <source src="" type="audio/mpeg" />
-          Your browser does not support the audio element.
-        </audio>
+      <Background3D />
+      <Header toggleTheme={toggleTheme} />
+      <main className="container">
         <Routes>
           <Route path="/" element={<PostList />} />
           <Route path="/post/:id" element={<Post />} />
           <Route path="/about" element={<About />} />
           <Route path="/admin" element={<AdminPage />} />
         </Routes>
-        <Footer />
-      </div>
+      </main>
+      <Footer />
     </BrowserRouter>
   );
 };
