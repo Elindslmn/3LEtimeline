@@ -7,7 +7,7 @@
 body { 
     background-color: #020408; 
     color: #fff; 
-    overflow: hidden; 
+    overflow-x: hidden; 
     margin: 0;
     cursor: none; /* Keep cursor hidden from old style */
 }

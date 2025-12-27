@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 
 // Configurazione della Helix
 const CONFIG = {
@@ -22,50 +22,21 @@ const timelineData = Array.from({ length: 25 }, (_, i) => {
 export default function AnimusScene() {
     const [activeIndex, setActiveIndex] = useState(10); // Partiamo dal centro
 
-    // Calcolo posizione camera per centrare l'elemento attivo
-    const targetX = -(activeIndex * CONFIG.spacing);
-    
     // Funzione per gestire il click e centrare
     const handleSelect = (idx: number) => {
         setActiveIndex(idx);
     };
 
     return (
-        <div className="h-screen w-full relative overflow-hidden animus-bg font-['Share_Tech_Mono'] selection:bg-[#c5a059] selection:text-black">
-            
-            {/* Noise Overlay per texture */}
-            <div className="noise-overlay"></div>
-
-            {/* HUD / UI ELEMENTS (Il contorno dello schermo) */}
-            <div className="absolute inset-0 pointer-events-none p-8 flex flex-col justify-between z-50">
-                <div className="flex justify-between items-start opacity-70">
-                    <div>
-                        <h1 className="text-3xl font-['Cinzel'] text-[#c5a059] tracking-[0.2em] drop-shadow-[0_0_10px_rgba(197,160,89,0.8)]">
-                            ANIMUS <span className="text-white text-sm tracking-widest block font-sans opacity-50">OMEGA PROTOCOL // V.4.0</span>
-                        </h1>
-                    </div>
-                    <div className="text-right text-xs text-[#00ffff] space-y-1">
-                        <p>MEM_USAGE: 4024 TB</p>
-                        <p>SYNC_RATE: 98.4%</p>
-                        <div className="w-32 h-1 bg-[#00ffff]/20 mt-2"><div className="w-[80%] h-full bg-[#00ffff] animate-pulse"></div></div>
-                    </div>
-                </div>
-                
-                <div className="flex justify-between items-end opacity-50 text-[10px] tracking-widest text-gray-400">
-                    <div>COORD: 45.4408° N, 12.3155° E</div>
-                    <div>SUBJECT: 17</div>
-                </div>
-            </div>
-
+        <div className="w-full flex flex-col items-center justify-center py-24 font-['Share_Tech_Mono'] selection:bg-[#c5a059] selection:text-black">
             {/* --- 3D VIEWPORT --- */}
-            <div className="absolute inset-0 flex items-center justify-center scene-container">
+            <div className="relative w-full max-w-6xl h-[620px] flex items-center justify-center scene-container">
                 
                 {/* HELIX CONTAINER (Mondo che si muove) */}
                 <motion.div 
                     className="relative h-full"
                     initial={false}
                     animate={{ 
-                        x: targetX,
                         rotateX: 10, // Leggera inclinazione fissa per vedere la profondità
                         rotateZ: -5  // Leggera inclinazione artistica
                     }}
@@ -84,7 +55,7 @@ export default function AnimusScene() {
                         const rad = (angle * Math.PI) / 180;        // Radianti
                         
                         // Posizione sulla spirale
-                        const x = index * CONFIG.spacing;
+                        const x = (index - activeIndex) * CONFIG.spacing;
                         const y = Math.sin(rad) * CONFIG.radius;
                         const z = Math.cos(rad) * CONFIG.radius; // Profondità
 
@@ -176,7 +147,7 @@ export default function AnimusScene() {
             </div>
 
             {/* CONTROLLI (Bottoni Sci-Fi) */}
-            <div className="absolute bottom-12 w-full flex justify-center gap-8 z-50">
+            <div className="mt-10 w-full flex justify-center gap-8">
                 <button 
                     onClick={() => handleSelect(Math.max(0, activeIndex - 1))}
                     className="px-8 py-2 bg-black/50 border border-[#00ffff]/30 text-[#00ffff] hover:bg-[#00ffff]/10 hover:border-[#00ffff] transition-all rounded backdrop-blur-md uppercase text-xs tracking-[0.2em]"
