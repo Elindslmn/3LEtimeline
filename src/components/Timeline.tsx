@@ -57,22 +57,23 @@ export default function Timeline({events}: {events: EventItem[]}) {
                 return a.title.localeCompare(b.title)
               })
               const diff = index - activeIndex
-              const angle = diff * 35
+              if (Math.abs(diff) > 6) return null
+              const angle = diff * 40
               const angleRad = (angle * Math.PI) / 180
-              const radius = 140
-              const spacing = 120
-              const x = diff * spacing
-              const y = Math.sin(angleRad) * radius
-              const z = Math.cos(angleRad) * radius
-              const scale = diff === 0 ? 1.05 : 0.85
-              const opacity = Math.max(0.2, 1 - Math.abs(diff) * 0.18)
+              const radius = 180
+              const spacing = 140
+              const x = Math.cos(angleRad) * radius
+              const y = diff * spacing
+              const z = Math.sin(angleRad) * radius
+              const scale = diff === 0 ? 1.08 : 0.82
+              const opacity = Math.max(0.12, 1 - Math.abs(diff) * 0.15)
 
               return (
                 <div
                   key={year}
                   className="helix-node"
                   style={{
-                    transform: `translate3d(${x}px, ${y}px, ${z}px) rotateX(${-angle}deg) scale(${scale})`,
+                    transform: `translate3d(${x}px, ${y}px, ${z}px) rotateY(${angle}deg) scale(${scale})`,
                     opacity
                   }}
                   onClick={() => setActiveIndex(index)}
