@@ -1,4 +1,4 @@
-import React, {useMemo, useState} from 'react'
+import React, {useEffect, useMemo, useState} from 'react'
 
 type EventItem = {
   id: string
@@ -43,6 +43,12 @@ export default function Timeline({events, activeYear, onSelectYear}: TimelinePro
 
   const [expandedYear, setExpandedYear] = useState<number | null>(null)
 
+  useEffect(() => {
+    if (activeYear !== null) {
+      setExpandedYear(activeYear)
+    }
+  }, [activeYear])
+
   return (
     <div className="timeline-shell">
       <div className="timeline-header">
@@ -62,6 +68,7 @@ export default function Timeline({events, activeYear, onSelectYear}: TimelinePro
           return (
             <section
               key={year}
+              id={`year-${year}`}
               className={`timeline-year${isActive ? ' is-active' : ''}`}
               onClick={() => {
                 onSelectYear(year)

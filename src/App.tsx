@@ -49,6 +49,14 @@ function AppRouterWrapper(){
     }
   }, [activeYear, years])
 
+  const handleSelectYear = (year: number) => {
+    setActiveYear(year)
+    const target = document.getElementById(`year-${year}`)
+    if (target) {
+      target.scrollIntoView({behavior: 'smooth', block: 'start'})
+    }
+  }
+
   return (
     <BrowserRouter>
       <div className="app-shell">
@@ -99,7 +107,7 @@ function AppRouterWrapper(){
               theme={theme}
               years={years}
               activeYear={activeYear}
-              onSelectYear={setActiveYear}
+              onSelectYear={handleSelectYear}
             />
           </aside>
 
@@ -111,7 +119,7 @@ function AppRouterWrapper(){
                   <Home
                     events={events}
                     activeYear={activeYear}
-                    onSelectYear={setActiveYear}
+                    onSelectYear={handleSelectYear}
                   />
                 }
               />
