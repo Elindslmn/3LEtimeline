@@ -9,6 +9,15 @@ type EventItem = {
   media?: { type: 'image' | 'video'; src: string }[]
 }
 
+const makeSignal = (seed: string) => {
+  let hash = 0
+  for (let i = 0; i < seed.length; i += 1) {
+    hash = (hash * 31 + seed.charCodeAt(i)) % 1000000
+  }
+  const hex = hash.toString(16).padStart(6, '0')
+  return `SYNC-${hex.toUpperCase()}`
+}
+
 export default function Timeline({events}: {events: EventItem[]}) {
   const {years, eventsByYear} = useMemo(() => {
     if (events.length === 0) {
@@ -50,6 +59,8 @@ export default function Timeline({events}: {events: EventItem[]}) {
   return (
     <div className="helix-shell">
       <div className="helix-grid" />
+      <div className="helix-strand helix-strand-left" />
+      <div className="helix-strand helix-strand-right" />
       <div className="helix-fog" />
       <div className="helix-scanlines" />
       <div className="helix-vignette" />
@@ -90,7 +101,10 @@ export default function Timeline({events}: {events: EventItem[]}) {
                 >
                   <div className={`helix-card ${diff === 0 ? 'is-active' : ''} ${isSelected ? 'is-selected' : ''}`}>
                     <div className="helix-card-header">
-                      <span className="helix-year">{year}</span>
+                      <div>
+                        <span className="helix-year">{year}</span>
+                        <div className="helix-seq">SEQ. {year} // MEMORY START</div>
+                      </div>
                       <span className="helix-status">{diff === 0 ? 'SYNCED' : 'LOCKED'}</span>
                     </div>
                     {yearEvents.length > 0 ? (
@@ -98,6 +112,7 @@ export default function Timeline({events}: {events: EventItem[]}) {
                         {yearEvents.map(ev => (
                           <div key={ev.id} className="helix-event">
                             <div className="helix-event-title">{ev.title}</div>
+                            <div className="helix-event-signal">{makeSignal(`${ev.id}-${ev.year}`)}</div>
                             {ev.date && <div className="helix-event-date">{ev.date}</div>}
                             {ev.description && <p className="helix-event-desc">{ev.description}</p>}
                           </div>
@@ -121,13 +136,17 @@ export default function Timeline({events}: {events: EventItem[]}) {
         <div className="helix-overlay" onClick={() => setSelectedIndex(null)}>
           <div className="helix-overlay-panel" onClick={(e) => e.stopPropagation()}>
             <div className="helix-overlay-header">
-              <span className="helix-year">{years[selectedIndex]}</span>
+              <div>
+                <div className="helix-overlay-label">Animus Database Entry</div>
+                <span className="helix-year">SEQ. {years[selectedIndex]} // MEMORY START</span>
+              </div>
               <button className="helix-close" onClick={() => setSelectedIndex(null)}>CLOSE</button>
             </div>
             <div className="helix-overlay-body">
               {(eventsByYear.get(years[selectedIndex]) ?? []).map(ev => (
                 <div key={ev.id} className="helix-event">
                   <div className="helix-event-title">{ev.title}</div>
+                  <div className="helix-event-signal">{makeSignal(`${ev.id}-${ev.year}`)}</div>
                   {ev.date && <div className="helix-event-date">{ev.date}</div>}
                   {ev.description && <p className="helix-event-desc">{ev.description}</p>}
                 </div>

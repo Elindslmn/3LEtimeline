@@ -34,10 +34,26 @@ function AppRouterWrapper(){
             <p className="app-subtitle">Animus Helix</p>
             <h1 className="app-title">Elind Timeline 1995-2025</h1>
           </div>
-          <nav className="app-nav">
-            <Link to="/">Home</Link>
-            <Link to="/admin">Admin</Link>
-          </nav>
+          <div className="app-header-right">
+            <nav className="app-nav">
+              <Link to="/">Home</Link>
+              <Link to="/admin">Admin</Link>
+            </nav>
+            <div className="app-hud">
+              <div className="app-hud-item">
+                <span className="hud-diamond" />
+                <span>HEAD</span>
+              </div>
+              <div className="app-hud-item">
+                <span className="hud-diamond" />
+                <span>HAND</span>
+              </div>
+              <div className="app-hud-item">
+                <span className="hud-diamond" />
+                <span>FEET</span>
+              </div>
+            </div>
+          </div>
         </header>
 
         <main className="app-main">
