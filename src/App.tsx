@@ -28,20 +28,28 @@ function AppRouterWrapper(){
 
   return (
     <BrowserRouter>
-      <div className="min-h-screen bg-gray-50 text-gray-900">
-        <div className="max-w-6xl mx-auto p-6">
-          <header className="flex items-center justify-between mb-6">
-            <h1 className="text-3xl font-bold">Elind Timeline 1995–2025</h1>
-            <nav>
-              <Link to="/" className="mr-4 text-blue-600">Home</Link>
-              <Link to="/admin" className="text-blue-600">Admin</Link>
-            </nav>
+      <div className="animus-shell">
+        <div className="animus-container">
+          <header className="mb-6">
+            <p className="animus-subtitle">Animus Desktop</p>
+            <h1 className="animus-title">Elind Timeline 1995-2025</h1>
           </header>
 
-          <Routes>
-            <Route path="/" element={<Home events={events} />} />
-            <Route path="/admin/*" element={<AdminPage events={events} setEvents={setEvents} storageKey={STORAGE_KEY} />} />
-          </Routes>
+          <div className="animus-layout">
+            <aside className="animus-sidebar">
+              <nav className="animus-menu">
+                <Link to="/">Home</Link>
+                <Link to="/admin">Admin</Link>
+              </nav>
+            </aside>
+
+            <main className="animus-content">
+              <Routes>
+                <Route path="/" element={<Home events={events} />} />
+                <Route path="/admin/*" element={<AdminPage events={events} setEvents={setEvents} storageKey={STORAGE_KEY} />} />
+              </Routes>
+            </main>
+          </div>
         </div>
       </div>
     </BrowserRouter>

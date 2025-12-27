@@ -2,4 +2,183 @@
 @tailwind components;
 @tailwind utilities;
 
-body { @apply bg-gray-50; }
+:root {
+  --ink: #3a3a3a;
+  --fog: #e7e7e7;
+  --glass: rgba(255, 255, 255, 0.8);
+  --line: rgba(120, 120, 120, 0.35);
+  --accent: #9b2b2b;
+  --accent-soft: rgba(155, 43, 43, 0.15);
+}
+
+body {
+  font-family: "Courier New", Courier, monospace;
+  background: var(--fog);
+  color: var(--ink);
+}
+
+.animus-shell {
+  position: relative;
+  min-height: 100vh;
+  background: linear-gradient(160deg, #eeeeee 0%, #e2e2e2 55%, #e9e9e9 100%);
+  color: var(--ink);
+  overflow: hidden;
+}
+
+.animus-shell::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.6) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.6) 1px, transparent 1px);
+  background-size: 120px 120px;
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.animus-shell::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.5), transparent 60%);
+  pointer-events: none;
+}
+
+.animus-container {
+  position: relative;
+  z-index: 1;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 40px 24px 64px;
+}
+
+.animus-title {
+  font-size: 28px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.animus-subtitle {
+  font-size: 12px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(58, 58, 58, 0.6);
+}
+
+.animus-layout {
+  display: flex;
+  gap: 28px;
+  align-items: flex-start;
+}
+
+.animus-sidebar {
+  width: 180px;
+}
+
+.animus-menu {
+  border: 1px solid var(--line);
+  background: var(--glass);
+  box-shadow: 0 12px 30px -24px rgba(0, 0, 0, 0.6);
+  padding: 14px 12px;
+}
+
+.animus-menu a {
+  display: block;
+  padding: 6px 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 11px;
+  color: var(--ink);
+}
+
+.animus-menu a:hover {
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.animus-content {
+  flex: 1;
+  border: 1px solid var(--line);
+  background: var(--glass);
+  padding: 24px;
+  box-shadow: 0 18px 50px -35px rgba(0, 0, 0, 0.7);
+}
+
+.animus-filter {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.animus-select {
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.9);
+  padding: 4px 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-size: 11px;
+}
+
+.animus-timeline {
+  position: relative;
+}
+
+.animus-line {
+  position: absolute;
+  left: 120px;
+  top: 0;
+  width: 1px;
+  height: 100%;
+  background: linear-gradient(to bottom, var(--line), transparent);
+}
+
+.animus-year {
+  width: 90px;
+  text-align: right;
+  font-size: 18px;
+  letter-spacing: 0.2em;
+}
+
+.animus-card {
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.9);
+  padding: 16px 18px;
+  box-shadow: 0 18px 40px -32px rgba(0, 0, 0, 0.7);
+}
+
+.animus-chip {
+  display: inline-block;
+  background: var(--accent);
+  color: white;
+  padding: 2px 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-size: 10px;
+}
+
+.animus-empty {
+  border: 1px dashed var(--line);
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.7);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.animus-media {
+  border: 1px solid var(--line);
+  background: white;
+}
+
+@media (max-width: 900px) {
+  .animus-layout {
+    flex-direction: column;
+  }
+  .animus-sidebar {
+    width: 100%;
+  }
+  .animus-line {
+    left: 84px;
+  }
+}
