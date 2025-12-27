@@ -1,165 +1,30 @@
-import React, {useEffect, useMemo, useState} from 'react'
-import { BrowserRouter, Routes, Route, Link, useLocation } from 'react-router-dom'
-import sampleEvents from '../data/events.json'
-import Home from './pages/Home'
-import AdminPage from './pages/AdminPage'
-import AnimusScene from './components/AnimusScene'
-import CustomCursor from './components/CustomCursor'
+import React from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import AnimusScene from './components/AnimusScene';
+import CustomCursor from './components/CustomCursor';
 
-const STORAGE_KEY = 'elind_timeline_events_v1'
+// The new AnimusScene is a full-screen, self-contained experience.
+// We can simplify the AppShell significantly to just host it.
+// The router is kept in case we want to add pages like 'admin' back later.
 
-type ThemeName = 'brotherhood' | 'cyberpunk' | 'ratchet'
-
-function AppShell(){
-  const location = useLocation()
-  const [events, setEvents] = useState(sampleEvents)
-  const [theme, setTheme] = useState<ThemeName>('brotherhood')
-  const [activeYear, setActiveYear] = useState<number | null>(null)
-
-  useEffect(() => {
-    const raw = localStorage.getItem(STORAGE_KEY)
-    if (raw) {
-      try {
-        setEvents(JSON.parse(raw))
-        return
-      } catch (e) {
-        console.warn('Invalid events in localStorage, falling back to sample')
-      }
-    }
-    setEvents(sampleEvents)
-  }, [])
-
-  useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(events))
-  }, [events])
-
-  useEffect(() => {
-    document.body.dataset.theme = theme
-  }, [theme])
-
-  const years = useMemo(() => {
-    if (events.length === 0) return [] as number[]
-    const minYear = Math.min(...events.map(e => e.year))
-    const maxYear = Math.max(...events.map(e => e.year))
-    return Array.from({length: maxYear - minYear + 1}, (_, i) => minYear + i)
-  }, [events])
-
-  useEffect(() => {
-    if (activeYear === null && years.length > 0) {
-      setActiveYear(years[0])
-    }
-  }, [activeYear, years])
-
-  const handleSelectYear = (year: number) => {
-    setActiveYear(year)
-    const target = document.getElementById(`year-${year}`)
-    if (target) {
-      target.scrollIntoView({behavior: 'smooth', block: 'start'})
-    }
-  }
-
-  const isHome = location.pathname === '/'
-
+function AppShell() {
   return (
     <div className="app-shell">
       <CustomCursor />
-      <div className="ui-scanlines" />
-      <div className="ui-noise" />
-      <div className="hud-overlay">
-        <div className="hud-top">
-          <div>
-            <div className="hud-title">ANIMUS // CORE</div>
-            <div className="hud-meta">OMEGA PROTOCOL // V4.0</div>
-          </div>
-          <div className="hud-stats">
-            <div>MEM_USAGE: 4024 TB</div>
-            <div>SYNC_RATE: 98.4%</div>
-            <div className="hud-bar" />
-          </div>
-        </div>
-        <div className="hud-bottom">
-          <div>COORD: 45.4408 N, 12.3155 E</div>
-          <div>SUBJECT: 17</div>
-        </div>
-      </div>
-
-      <header className="app-header">
-        <div>
-          <p className="app-subtitle">Animus Helix</p>
-          <h1 className="app-title">Elind Timeline 1995-2025</h1>
-        </div>
-        <div className="app-header-right">
-          <nav className="app-nav">
-            <Link to="/">Home</Link>
-            <a href="#about">About</a>
-            <Link to="/admin">Login</Link>
-          </nav>
-          <div className="theme-switch">
-            <span className="theme-label">Tema</span>
-            <button
-              type="button"
-              className={theme === 'brotherhood' ? 'is-active' : ''}
-              onClick={() => setTheme('brotherhood')}
-            >
-              AC
-            </button>
-            <button
-              type="button"
-              className={theme === 'cyberpunk' ? 'is-active' : ''}
-              onClick={() => setTheme('cyberpunk')}
-            >
-              CP
-            </button>
-            <button
-              type="button"
-              className={theme === 'ratchet' ? 'is-active' : ''}
-              onClick={() => setTheme('ratchet')}
-            >
-              R&C
-            </button>
-          </div>
-        </div>
-      </header>
-
-      <div className={`app-layout${isHome ? ' is-home' : ''}`}>
-        <aside className={`app-helix${isHome ? ' is-home' : ''}`}>
-          <AnimusScene
-            theme={theme}
-            years={years}
-            activeYear={activeYear}
-            onSelectYear={handleSelectYear}
-          />
-        </aside>
-
-        {!isHome && (
-          <main className="app-main">
-            <Routes>
-              <Route
-                path="/"
-                element={
-                  <Home
-                    events={events}
-                    activeYear={activeYear}
-                    onSelectYear={handleSelectYear}
-                  />
-                }
-              />
-              <Route
-                path="/admin/*"
-                element={<AdminPage events={events} setEvents={setEvents} storageKey={STORAGE_KEY} />}
-              />
-            </Routes>
-          </main>
-        )}
-      </div>
+      {/* The AnimusScene now handles its own background, HUD, and effects */}
+      <AnimusScene />
     </div>
-  )
+  );
 }
 
 export default function AppRouterWrapper() {
   return (
     <BrowserRouter>
-      <AppShell />
+      {/* For now, we only render the main AppShell.
+          If other pages are needed, they can be added here. */}
+      <Routes>
+        <Route path="*" element={<AppShell />} />
+      </Routes>
     </BrowserRouter>
-  )
+  );
 }

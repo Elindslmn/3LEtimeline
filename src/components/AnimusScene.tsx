@@ -1,159 +1,196 @@
-import React, {useMemo, useRef} from 'react'
-import {Canvas, useFrame} from '@react-three/fiber'
-import {Html} from '@react-three/drei'
-import * as THREE from 'three'
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
-type ThemeName = 'brotherhood' | 'cyberpunk' | 'ratchet'
+// Configurazione della Helix
+const CONFIG = {
+    spacing: 160,     // Spazio tra le card
+    radius: 280,      // Larghezza della spirale (più larga = più cinematografica)
+    rotationSpeed: 30 // Gradi per step (più basso = spirale più lunga e morbida)
+};
 
-type AnimusSceneProps = {
-  theme: ThemeName
-  years: number[]
-  activeYear: number | null
-  onSelectYear: (year: number) => void
-}
+// Generiamo dati finti "Cryptic"
+const timelineData = Array.from({ length: 25 }, (_, i) => {
+    const year = 1995 + i;
+    return {
+        year: year,
+        title: i % 2 === 0 ? "GENETIC_MEMORY" : "FRAGMENT_LOST",
+        status: i % 3 === 0 ? "CORRUPTED" : "SYNCED",
+        desc: "Sequence loaded successfully. Genetic markers indicate high precursor activity."
+    };
+});
 
-const THEME_COLORS: Record<ThemeName, {primary: string; glow: string; grid: string; fog: string}> = {
-  brotherhood: {primary: '#d20000', glow: '#ff3b3b', grid: '#d7d7d7', fog: '#f3f3f3'},
-  cyberpunk: {primary: '#00ff41', glow: '#7f00ff', grid: '#1a1a1a', fog: '#050505'},
-  ratchet: {primary: '#ff8c1a', glow: '#00c3ff', grid: '#244d7a', fog: '#0c1b33'}
-}
+export default function AnimusScene() {
+    const [activeIndex, setActiveIndex] = useState(10); // Partiamo dal centro
 
-type HelixNode = {
-  year: number
-  posLeft: [number, number, number]
-  posRight: [number, number, number]
-}
+    // Calcolo posizione camera per centrare l'elemento attivo
+    const targetX = -(activeIndex * CONFIG.spacing);
+    
+    // Funzione per gestire il click e centrare
+    const handleSelect = (idx: number) => {
+        setActiveIndex(idx);
+    };
 
-function DNAHelix({theme, years, activeYear, onSelectYear}: AnimusSceneProps) {
-  const group = useRef<THREE.Group>(null)
-  const {primary, glow} = THEME_COLORS[theme]
-  const nodes = useMemo<HelixNode[]>(() => {
-    if (years.length === 0) return []
-    const radius = 0.6
-    const targetHeight = 5.4
-    const spacing = years.length > 1 ? targetHeight / (years.length - 1) : 0
-    const mid = (years.length - 1) / 2
-    return years.map((year, index) => {
-      const t = index * 0.7
-      const x = Math.cos(t) * radius
-      const z = Math.sin(t) * radius
-      const y = (index - mid) * spacing
-      return {
-        year,
-        posLeft: [x, y, z],
-        posRight: [-x, y, -z]
-      }
-    })
-  }, [years])
+    return (
+        <div className="h-screen w-full relative overflow-hidden animus-bg font-['Share_Tech_Mono'] selection:bg-[#c5a059] selection:text-black">
+            
+            {/* Noise Overlay per texture */}
+            <div className="noise-overlay"></div>
 
-  useFrame(() => {
-    if (group.current) {
-      group.current.rotation.y += 0.0045
-    }
-  })
-
-  const activeIndex = activeYear ? years.indexOf(activeYear) : 0
-
-  return (
-    <group ref={group} position={[-1.15, 0, 0]} rotation={[0.12, 0.5, 0]}>
-      <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
-        <cylinderGeometry args={[0.02, 0.02, 6, 24]} />
-        <meshStandardMaterial color={primary} emissive={glow} emissiveIntensity={0.4} opacity={0.4} transparent />
-      </mesh>
-      {nodes.map((node, index) => {
-        const isActive = node.year === activeYear
-        const dist = Math.abs(index - activeIndex)
-        const scale = isActive ? 1.25 : Math.max(0.75, 1 - dist * 0.08)
-        const opacity = Math.max(0.25, 1 - dist * 0.15)
-        const blur = Math.min(8, dist * 1.6)
-        return (
-          <group key={node.year} position={[0, 0, 0]}>
-            <mesh
-              position={node.posLeft}
-              scale={scale}
-              onClick={() => onSelectYear(node.year)}
-              castShadow
-            >
-              <sphereGeometry args={[0.08, 24, 24]} />
-              <meshStandardMaterial
-                color={primary}
-                emissive={glow}
-                emissiveIntensity={isActive ? 1.2 : 0.4}
-              />
-            </mesh>
-            <mesh
-              position={node.posRight}
-              scale={scale}
-              onClick={() => onSelectYear(node.year)}
-              castShadow
-            >
-              <sphereGeometry args={[0.08, 24, 24]} />
-              <meshStandardMaterial
-                color={primary}
-                emissive={glow}
-                emissiveIntensity={isActive ? 1.2 : 0.3}
-              />
-            </mesh>
-            <mesh
-              position={[0, node.posLeft[1], 0]}
-              rotation={[0, 0, Math.PI / 2]}
-              scale={[1, 1, 1]}
-            >
-              <cylinderGeometry args={[0.01, 0.01, Math.abs(node.posLeft[0]) * 2, 12]} />
-              <meshStandardMaterial color={primary} opacity={0.6} transparent />
-            </mesh>
-            <Html
-              position={[node.posLeft[0] * 1.15, node.posLeft[1], node.posLeft[2] * 1.1]}
-              transform
-              distanceFactor={1.5}
-              center
-            >
-              <div
-                className={`helix-card3d${isActive ? ' is-active' : ''}`}
-                style={{
-                  opacity,
-                  filter: `blur(${blur}px)`,
-                  transform: `scale(${scale})`,
-                  animationDelay: `${index * 0.12}s`
-                }}
-              >
-                <div className="helix-card3d-header">
-                  <span className="helix-card3d-year">{node.year}</span>
-                  <span className="helix-card3d-status">{isActive ? 'SYNCED' : 'LOCKED'}</span>
+            {/* HUD / UI ELEMENTS (Il contorno dello schermo) */}
+            <div className="absolute inset-0 pointer-events-none p-8 flex flex-col justify-between z-50">
+                <div className="flex justify-between items-start opacity-70">
+                    <div>
+                        <h1 className="text-3xl font-['Cinzel'] text-[#c5a059] tracking-[0.2em] drop-shadow-[0_0_10px_rgba(197,160,89,0.8)]">
+                            ANIMUS <span className="text-white text-sm tracking-widest block font-sans opacity-50">OMEGA PROTOCOL // V.4.0</span>
+                        </h1>
+                    </div>
+                    <div className="text-right text-xs text-[#00ffff] space-y-1">
+                        <p>MEM_USAGE: 4024 TB</p>
+                        <p>SYNC_RATE: 98.4%</p>
+                        <div className="w-32 h-1 bg-[#00ffff]/20 mt-2"><div className="w-[80%] h-full bg-[#00ffff] animate-pulse"></div></div>
+                    </div>
                 </div>
-                <div className="helix-card3d-meta">SEQ. {node.year} // MEMORY START</div>
-              </div>
-            </Html>
-          </group>
-        )
-      })}
-    </group>
-  )
-}
+                
+                <div className="flex justify-between items-end opacity-50 text-[10px] tracking-widest text-gray-400">
+                    <div>COORD: 45.4408° N, 12.3155° E</div>
+                    <div>SUBJECT: 17</div>
+                </div>
+            </div>
 
-function WireGrid({theme}: {theme: ThemeName}) {
-  const {grid} = THEME_COLORS[theme]
-  return (
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -1.8, -2]}>
-        <planeGeometry args={[12, 12, 24, 24]} />
-      <meshBasicMaterial color={grid} wireframe opacity={0.35} transparent />
-      </mesh>
-  )
-}
+            {/* --- 3D VIEWPORT --- */}
+            <div className="absolute inset-0 flex items-center justify-center scene-container">
+                
+                {/* HELIX CONTAINER (Mondo che si muove) */}
+                <motion.div 
+                    className="relative h-full"
+                    initial={false}
+                    animate={{ 
+                        x: targetX,
+                        rotateX: 10, // Leggera inclinazione fissa per vedere la profondità
+                        rotateZ: -5  // Leggera inclinazione artistica
+                    }}
+                    transition={{ type: "spring", stiffness: 100, damping: 20, mass: 1 }}
+                    style={{ transformStyle: 'preserve-3d', width: '100%' }}
+                >
+                    
+                    {/* DNA STRAND (Il raggio centrale) */}
+                    <div className="absolute top-1/2 left-[-5000px] w-[10000px] h-[2px] bg-gradient-to-r from-transparent via-[#c5a059] to-transparent opacity-30 blur-[1px]" 
+                         style={{ transform: 'translateY(-50%) translateZ(0)' }} 
+                    />
 
-export default function AnimusScene({theme, years, activeYear, onSelectYear}: AnimusSceneProps) {
-  const {fog} = THEME_COLORS[theme]
-  return (
-    <div className="helix-canvas">
-      <Canvas shadows camera={{position: [0.2, 0, 4.4], fov: 36}}>
-        <fog attach="fog" args={[fog, 2.4, 7.5]} />
-        <ambientLight intensity={0.5} />
-        <pointLight position={[3, 4, 4]} intensity={1.4} castShadow />
-        <pointLight position={[-2, -2, 3]} intensity={0.8} />
-        <spotLight position={[2, -3, 4]} intensity={0.6} angle={0.6} penumbra={0.8} />
-        <DNAHelix theme={theme} years={years} activeYear={activeYear} onSelectYear={onSelectYear} />
-        <WireGrid theme={theme} />
-      </Canvas>
-    </div>
-  )
-}
+                    {/* ITEM GENERATION */}
+                    {timelineData.map((item, index) => {
+                        const angle = index * CONFIG.rotationSpeed; // Gradi
+                        const rad = (angle * Math.PI) / 180;        // Radianti
+                        
+                        // Posizione sulla spirale
+                        const x = index * CONFIG.spacing;
+                        const y = Math.sin(rad) * CONFIG.radius;
+                        const z = Math.cos(rad) * CONFIG.radius; // Profondità
+
+                        // Stato "Attivo"
+                        const isActive = index === activeIndex;
+                        const dist = Math.abs(index - activeIndex);
+                        
+                        // Calcoli visivi basati sulla distanza dall'attivo
+                        const scale = isActive ? 1.3 : Math.max(0.6, 1 - dist * 0.15);
+                        const opacity = Math.max(0.1, 1 - dist * 0.25);
+                        const blur = isActive ? 0 : Math.min(10, dist * 2); // Sfocatura per profondità
+
+                        return (
+                            <motion.div
+                                key={item.year}
+                                onClick={() => handleSelect(index)}
+                                className="absolute top-1/2 left-1/2 cursor-pointer group"
+                                style={{
+                                    transform: `translate3d(${x}px, ${y}px, ${z}px) rotateY(${-20}deg)`, // Ruotati leggermente verso camera
+                                    zIndex: 100 - dist, // Fix sovrapposizione
+                                }}
+                                animate={{
+                                    rotateX: -angle, // Contro-rotazione per tenerli dritti
+                                }}
+                                transition={{ type: "spring", stiffness: 100 }}
+                            >
+                                
+                                {/* CARD CONTENT */}
+                                <motion.div 
+                                    className={`
+                                        relative w-64 h-40 rounded-lg overflow-hidden flex flex-col p-4
+                                        transition-all duration-500 ease-out
+                                        ${isActive ? 'active-card z-50' : 'glass-panel hover:bg-white/10'}
+                                    `}
+                                    style={{
+                                        scale,
+                                        opacity,
+                                        filter: `blur(${blur}px)`, // Depth of Field reale
+                                    }}
+                                >
+                                    {/* Scanlines solo se attivo */}
+                                    {isActive && <div className="absolute inset-0 scanlines opacity-30"></div>}
+
+                                    {/* Header Card */}
+                                    <div className="flex justify-between items-center border-b border-white/10 pb-2 mb-2">
+                                        <span className={`text-3xl font-bold font-['Cinzel'] ${isActive ? 'text-[#c5a059] drop-shadow-[0_0_8px_rgba(197,160,89,0.8)]' : 'text-gray-400'}`}>
+                                            {item.year}
+                                        </span>
+                                        <div className={`w-2 h-2 rounded-full ${item.status === 'CORRUPTED' ? 'bg-red-500 shadow-[0_0_10px_red]' : 'bg-[#00ffff] shadow-[0_0_10px_cyan]'}`}></div>
+                                    </div>
+
+                                    {/* Body Card */}
+                                    <div className="flex-1">
+                                        <h3 className="text-xs text-gray-300 tracking-widest mb-1">{item.title}</h3>
+                                        {isActive && (
+                                            <motion.p 
+                                                initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}
+                                                className="text-[10px] text-[#c5a059] leading-relaxed font-sans"
+                                            >
+                                                {item.desc}
+                                            </motion.p>
+                                        )}
+                                    </div>
+
+                                    {/* Decorative Tech Footer */}
+                                    <div className="flex justify-between items-end mt-auto opacity-50">
+                                        <span className="text-[8px]">SEQ_{index}02</span>
+                                        <div className="flex gap-1">
+                                            {[1,2,3].map(d => <div key={d} className="w-1 h-3 bg-white/40"></div>)}
+                                        </div>
+                                    </div>
+
+                                </motion.div>
+
+                                {/* "Raggio" che connette la card al centro della spirale (Anchor) */}
+                                <div 
+                                    className={`absolute top-1/2 left-1/2 w-[1px] origin-top bg-gradient-to-b from-[#c5a059] to-transparent transition-all duration-500`}
+                                    style={{ 
+                                        height: CONFIG.radius, 
+                                        transform: `rotate(${angle}deg)`, // Questo deve opporsi alla rotazione locale per puntare al centro
+                                        opacity: isActive ? 0.6 : 0.1
+                                    }}
+                                ></div>
+
+                            </motion.div>
+                        );
+                    })}
+                </motion.div>
+            </div>
+
+            {/* CONTROLLI (Bottoni Sci-Fi) */}
+            <div className="absolute bottom-12 w-full flex justify-center gap-8 z-50">
+                <button 
+                    onClick={() => handleSelect(Math.max(0, activeIndex - 1))}
+                    className="px-8 py-2 bg-black/50 border border-[#00ffff]/30 text-[#00ffff] hover:bg-[#00ffff]/10 hover:border-[#00ffff] transition-all rounded backdrop-blur-md uppercase text-xs tracking-[0.2em]"
+                >
+                    &lt; Rewind
+                </button>
+                <button 
+                    onClick={() => handleSelect(Math.min(timelineData.length - 1, activeIndex + 1))}
+                    className="px-8 py-2 bg-black/50 border border-[#c5a059]/30 text-[#c5a059] hover:bg-[#c5a059]/10 hover:border-[#c5a059] transition-all rounded backdrop-blur-md uppercase text-xs tracking-[0.2em]"
+                >
+                    Forward &gt;
+                </button>
+            </div>
+
+        </div>
+    );
+};
