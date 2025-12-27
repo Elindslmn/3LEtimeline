@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Debug Mode</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <style>body { background: #111; color: #0f0; font-family: monospace; padding: 20px; font-size: 14px; }</style>
+</head>
+<body>
+    <h1>System Diagnosis...</h1>
+    <ul id="log"></ul>
+
+    <script>
+        function log(msg, status) {
+            const el = document.getElementById('log');
+            const color = status === 'ok' ? '#0f0' : '#f00';
+            const li = document.createElement('li');
+            li.style.color = color;
+            li.innerText = `[${status.toUpperCase()}] ${msg}`;
+            el.appendChild(li);
+        }
+    </script>
+
+    <script src="https://unpkg.com/react@18/umd/react.development.js"
+            onload="log('React Loaded', 'ok')"
+            onerror="log('React FAILED', 'err')"></script>
+
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"
+            onload="log('ReactDOM Loaded', 'ok')"
+            onerror="log('ReactDOM FAILED', 'err')"></script>
+    
+    <script src="https://cdn.tailwindcss.com"
+            onload="log('Tailwind Loaded', 'ok')"
+            onerror="log('Tailwind FAILED', 'err')"></script>
+
+    <script src="https://unpkg.com/framer-motion@10.16.4/dist/framer-motion.js"
+            onload="(function(){ if(window.Motion || window.FramerMotion || window.framerMotion) log('Framer Motion Global Found', 'ok'); else log('Framer Motion Loaded but global MISSING', 'err'); })()"
+            onerror="log('Framer Motion Network FAILED', 'err')"></script>
+
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"
+            onload="log('Babel Loaded', 'ok')"
+            onerror="log('Babel FAILED', 'err')"></script>
+
+    <script>
+        setTimeout(() => {
+            try {
+                if (!window.React) throw new Error("React non trovato");
+                if (!window.ReactDOM) throw new Error("ReactDOM non trovato");
+                const testRoot = document.createElement('div');
+                const root = ReactDOM.createRoot(testRoot);
+                log("React Root API Check Passed", 'ok');
+            } catch (e) {
+                log("React Check Failed: " + e.message, 'err');
+            }
+        }, 1000);
+    </script>
+</body>
+</html>
