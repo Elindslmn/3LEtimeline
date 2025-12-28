@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import postsData from '../data/posts.json';
+import { Canvas } from '@react-three/fiber';
+import DNA from './DNA';
 
 declare global {
   interface Window {
@@ -45,16 +47,27 @@ const PostList = () => {
   }, [posts]);
 
   return (
-    <ul className="post-list" ref={postListRef}>
-      {posts.map((post: any) => (
-        <li key={post.id} className="post-list-item">
-          <h2>
-            <Link to={`/post/${post.id}`}>{post.title}</Link>
-          </h2>
-          <p className="post-meta">{post.date}</p>
-        </li>
-      ))}
-    </ul>
+    <div style={{ display: 'flex' }}>
+      <div style={{ flex: 1 }}>
+        <ul className="post-list" ref={postListRef}>
+          {posts.map((post: any) => (
+            <li key={post.id} className="post-list-item">
+              <h2>
+                <Link to={`/post/${post.id}`}>{post.title}</Link>
+              </h2>
+              <p className="post-meta">{post.date}</p>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div style={{ flex: 1 }}>
+        <Canvas>
+          <ambientLight intensity={0.5} />
+          <pointLight position={[10, 10, 10]} />
+          <DNA />
+        </Canvas>
+      </div>
+    </div>
   );
 };
 

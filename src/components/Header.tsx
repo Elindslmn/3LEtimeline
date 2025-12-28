@@ -11,7 +11,7 @@ const Header = ({ toggleTheme }: { toggleTheme: () => void }) => {
         <Link to="/">Home</Link>
         <Link to="/about">About</Link>
         <Link to="/admin" className="admin-button">Admin</Link>
-        <button onClick={toggleTheme}>Toggle Theme</button>
+        <button onClick={toggleTheme} className="theme-toggle-button">Toggle Theme</button>
       </nav>
     </header>
   );

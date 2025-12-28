@@ -12,6 +12,7 @@
   --border-color: #2d3748;
   --link-color: #00ffff;
   --link-hover-color: #ff00ff;
+  --cursor-color: red;
 }
 
 [data-theme='light'] {
@@ -22,6 +23,7 @@
   --border-color: #e2e8f0;
   --link-color: #007aff;
   --link-hover-color: #0056b3;
+  --cursor-color: red;
 }
 
 body {
@@ -32,7 +34,22 @@ body {
   color: var(--text-color);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  cursor: none;
 }
+
+.custom-cursor {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: var(--cursor-color);
+  pointer-events: none;
+  mix-blend-mode: difference;
+  z-index: 9999;
+}
+
 
 .container {
   max-width: 900px;
@@ -72,6 +89,16 @@ header nav a {
 
 header nav a:hover {
   color: var(--accent-color);
+}
+
+.theme-toggle-button {
+  background: none;
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-left: 2rem;
 }
 
 .admin-button {
