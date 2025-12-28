@@ -1,10 +1,17 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import posts from '../data/posts.json';
+import postsData from '../data/posts.json';
 
 const Post = () => {
   const { id } = useParams();
-  const post = posts.find((p) => p.id === id);
+  const [post, setPost] = useState(null);
+
+  useEffect(() => {
+    const savedPosts = localStorage.getItem('posts');
+    const posts = savedPosts ? JSON.parse(savedPosts) : postsData;
+    const currentPost = posts.find((p: any) => p.id === id);
+    setPost(currentPost);
+  }, [id]);
 
   if (!post) {
     return <div>Post not found</div>;

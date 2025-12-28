@@ -1,12 +1,27 @@
 @import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap');
 
 :root {
-  --background-color: #fff;
-  --text-color: #555;
-  --heading-color: #222;
-  --accent-color: #007aff;
-  --border-color: #eee;
   --font-family: 'Lato', sans-serif;
+}
+
+[data-theme='dark'] {
+  --background-color: #1a202c;
+  --text-color: #cbd5e0;
+  --heading-color: #fff;
+  --accent-color: #00ffff;
+  --border-color: #2d3748;
+  --link-color: #00ffff;
+  --link-hover-color: #ff00ff;
+}
+
+[data-theme='light'] {
+  --background-color: #fff;
+  --text-color: #4a5568;
+  --heading-color: #1a202c;
+  --accent-color: #007aff;
+  --border-color: #e2e8f0;
+  --link-color: #007aff;
+  --link-hover-color: #0056b3;
 }
 
 body {
@@ -59,6 +74,21 @@ header nav a:hover {
   color: var(--accent-color);
 }
 
+.admin-button {
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+  background-color: transparent;
+  color: var(--text-color);
+  cursor: pointer;
+}
+
+.admin-button:hover {
+  background-color: var(--accent-color);
+  color: var(--background-color);
+}
+
+
 .post-list {
   list-style: none;
   padding: 0;
@@ -86,7 +116,7 @@ header nav a:hover {
 }
 
 .post-meta {
-  color: #999;
+  color: #718096;
   font-size: 0.9rem;
   margin-top: 0.5rem;
 }
@@ -116,6 +146,6 @@ footer {
   padding-top: 3rem;
   margin-top: 5rem;
   text-align: center;
-  color: #999;
+  color: #718096;
   border-top: 1px solid var(--border-color);
 }

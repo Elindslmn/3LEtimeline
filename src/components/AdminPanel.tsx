@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import postsData from '../data/posts.json';
 
 type Post = {
@@ -11,7 +11,21 @@ type Post = {
 };
 
 const AdminPanel = () => {
-  const [posts, setPosts] = useState<Post[]>(postsData);
+  const [posts, setPosts] = useState<Post[]>([]);
+
+  useEffect(() => {
+    const savedPosts = localStorage.getItem('posts');
+    if (savedPosts) {
+      setPosts(JSON.parse(savedPosts));
+    } else {
+      setPosts(postsData);
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('posts', JSON.stringify(posts));
+  }, [posts]);
+
   const [editingPost, setEditingPost] = useState<Post | null>(null);
 
   const handleAddPost = () => {
@@ -40,19 +54,10 @@ const AdminPanel = () => {
     setEditingPost(null);
   };
 
-  const handleSaveChanges = () => {
-    const data = JSON.stringify(posts, null, 2);
-    const mailtoLink = `mailto:?subject=Updated posts.json&body=${encodeURIComponent(
-      data
-    )}`;
-    window.location.href = mailtoLink;
-  };
-
   return (
     <div>
       <h2>Admin Panel</h2>
       <button onClick={handleAddPost}>Add New Post</button>
-      <button onClick={handleSaveChanges}>Save Changes</button>
       {editingPost && (
         <div>
           <h3>Edit Post</h3>

@@ -1,6 +1,6 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import posts from '../data/posts.json';
+import postsData from '../data/posts.json';
 
 declare global {
   interface Window {
@@ -10,10 +10,20 @@ declare global {
 }
 
 const PostList = () => {
+  const [posts, setPosts] = useState([]);
   const postListRef = useRef(null);
 
   useEffect(() => {
-    if (window.gsap) {
+    const savedPosts = localStorage.getItem('posts');
+    if (savedPosts) {
+      setPosts(JSON.parse(savedPosts));
+    } else {
+      setPosts(postsData);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (window.gsap && postListRef.current) {
       window.gsap.registerPlugin(window.ScrollTrigger);
       const posts = postListRef.current.children;
       window.gsap.fromTo(
@@ -32,11 +42,11 @@ const PostList = () => {
         }
       );
     }
-  }, []);
+  }, [posts]);
 
   return (
     <ul className="post-list" ref={postListRef}>
-      {posts.map((post) => (
+      {posts.map((post: any) => (
         <li key={post.id} className="post-list-item">
           <h2>
             <Link to={`/post/${post.id}`}>{post.title}</Link>

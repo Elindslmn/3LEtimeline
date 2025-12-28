@@ -1,6 +1,7 @@
-import React, { useRef } from 'react';
+import React, { useRef, useMemo } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Icosahedron } from '@react-three/drei';
+import { Box, Sphere, Torus, Icosahedron } from '@react-three/drei';
+import * as THREE from 'three';
 
 const Background3D = () => {
   return (
@@ -22,21 +23,31 @@ const Scene = () => {
     }
   });
 
+  const shapes = useMemo(() => {
+    const shapeComponents = [Box, Sphere, Torus, Icosahedron];
+    const colors = ['#00ffff', '#ff00ff', '#ffff00'];
+    return [...Array(50)].map((_, i) => {
+      const Shape = shapeComponents[Math.floor(Math.random() * shapeComponents.length)];
+      return {
+        id: i,
+        Component: Shape,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        position: new THREE.Vector3(
+          (Math.random() - 0.5) * 40,
+          (Math.random() - 0.5) * 40,
+          (Math.random() - 0.5) * 40
+        ),
+        scale: Math.random() * 0.5 + 0.2,
+      };
+    });
+  }, []);
+
   return (
     <group ref={groupRef}>
-      {[...Array(20)].map((_, i) => (
-        <Icosahedron
-          key={i}
-          args={[1, 0]}
-          position={[
-            (Math.random() - 0.5) * 20,
-            (Math.random() - 0.5) * 20,
-            (Math.random() - 0.5) * 20,
-          ]}
-          scale={Math.random() * 0.5}
-        >
-          <meshStandardMaterial color="#fff" roughness={0} metalness={0} />
-        </Icosahedron>
+      {shapes.map(({ id, Component, color, position, scale }) => (
+        <Component key={id} position={position} scale={scale}>
+          <meshStandardMaterial color={color} roughness={0} metalness={0.5} />
+        </Component>
       ))}
     </group>
   );
